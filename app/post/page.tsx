@@ -28,7 +28,7 @@
 //   } = useForm<FormValues>();
 //   // Using toast notifications instead of state for messages
 //   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  
+
 //   const router = useRouter()
 
 //   const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
@@ -79,7 +79,7 @@
 //         imageUrls,
 //         createdAt: new Date(),
 //       };
-      
+
 //       const res = await addDoc(collection(db, "products"), product);
 //       return res;
 //     };
@@ -120,8 +120,8 @@
 //                     className="hidden"
 //                     id="image-upload"
 //                   />
-//                   <label 
-//                     htmlFor="image-upload" 
+//                   <label
+//                     htmlFor="image-upload"
 //                     className="cursor-pointer flex flex-col items-center justify-center"
 //                   >
 //                     <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
@@ -247,8 +247,9 @@ import { uploadImageToSupabase } from "../_services/upload";
 import { Product } from "../_type/product";
 import { collection, addDoc, getFirestore } from "firebase/firestore";
 import { app } from "../_lib/firebase";
-import { Toaster, toast } from 'sonner';
+import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const db = getFirestore(app);
 
@@ -270,32 +271,39 @@ export default function ProductUploadPage() {
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const router = useRouter();
 
-  const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    console.log("Selected files:", files ? Array.from(files).map(f => f.name) : "None"); // Debug
-    if (files && files.length > 0) {
-      const fileArray = Array.from(files);
-      setImages(fileArray);
-      const urls = fileArray.map(file => URL.createObjectURL(file));
-      setPreviewUrls(prev => {
-        prev.forEach(url => URL.revokeObjectURL(url));
-        return urls;
-      });
-    } else {
-      setImages([]);
-      setPreviewUrls([]);
-    }
-  }, []);
+  const handleImageChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      console.log(
+        "Selected files:",
+        files ? Array.from(files).map((f) => f.name) : "None"
+      ); // Debug
+      if (files && files.length > 0) {
+        const fileArray = Array.from(files);
+        setImages(fileArray);
+        const urls = fileArray.map((file) => URL.createObjectURL(file));
+        setPreviewUrls((prev) => {
+          prev.forEach((url) => URL.revokeObjectURL(url));
+          return urls;
+        });
+      } else {
+        setImages([]);
+        setPreviewUrls([]);
+      }
+    },
+    []
+  );
 
   useEffect(() => {
-    return () => previewUrls.forEach(url => URL.revokeObjectURL(url));
+    return () => previewUrls.forEach((url) => URL.revokeObjectURL(url));
   }, [previewUrls]);
 
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
     if (!name.trim()) newErrors.name = "Product name is required";
     if (!category) newErrors.category = "Category is required";
-    if (!price || Number(price) < 0) newErrors.price = "Valid price is required";
+    if (!price || Number(price) < 0)
+      newErrors.price = "Valid price is required";
     if (!description.trim()) newErrors.description = "Description is required";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -306,7 +314,13 @@ export default function ProductUploadPage() {
     if (!validateForm()) return;
 
     setIsSubmitting(true);
-    console.log("Form data:", { name, category, price, description, images: images.map(f => f.name) }); // Debug
+    console.log("Form data:", {
+      name,
+      category,
+      price,
+      description,
+      images: images.map((f) => f.name),
+    }); // Debug
 
     const promise = async () => {
       const imageUrls: string[] = [];
@@ -321,13 +335,19 @@ export default function ProductUploadPage() {
             throw new Error(`Image ${file.name} exceeds 10MB limit`);
           }
           if (!file.type.match(/^image\/(jpeg|png|webp|gif)$/)) {
-            throw new Error(`Invalid file type for ${file.name}. Supported: JPEG, PNG, WebP, GIF`);
+            throw new Error(
+              `Invalid file type for ${file.name}. Supported: JPEG, PNG, WebP, GIF`
+            );
           }
         }
 
         // Upload images concurrently
-        const uploadPromises = images.map(file =>
-          uploadImageToSupabase(file, bucket, `products/${name}_${Date.now()}_${file.name}`)
+        const uploadPromises = images.map((file) =>
+          uploadImageToSupabase(
+            file,
+            bucket,
+            `products/${name}_${Date.now()}_${file.name}`
+          )
         );
         const results = await Promise.all(uploadPromises);
         console.log("Upload results:", results); // Debug
@@ -357,7 +377,7 @@ export default function ProductUploadPage() {
     };
 
     toast.promise(promise(), {
-      loading: 'Uploading product...',
+      loading: "Uploading product...",
       success: () => {
         setName("");
         setCategory("");
@@ -365,10 +385,10 @@ export default function ProductUploadPage() {
         setDescription("");
         setImages([]);
         setPreviewUrls([]);
-        setTimeout(() => router.push('/'), 1000);
-        return 'Product uploaded successfully! 🎉';
+        setTimeout(() => router.push("/"), 1000);
+        return "Product uploaded successfully! 🎉";
       },
-      error: (err) => err.message || 'Failed to upload product',
+      error: (err) => err.message || "Failed to upload product",
       finally: () => setIsSubmitting(false),
     });
   };
@@ -381,7 +401,9 @@ export default function ProductUploadPage() {
           <div className="flex flex-col md:flex-row">
             {/* Left Panel - Image Upload */}
             <div className="md:w-1/2 bg-[#1a1f36] p-8">
-              <h2 className="text-2xl font-bold text-white mb-6">Product Images</h2>
+              <h2 className="text-2xl font-bold text-white mb-6">
+                Product Images
+              </h2>
               <div className="space-y-4">
                 <div className="border-2 border-dashed border-gray-600 rounded-xl p-6 text-center">
                   <input
@@ -397,12 +419,27 @@ export default function ProductUploadPage() {
                     className="cursor-pointer flex flex-col items-center justify-center"
                   >
                     <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mb-4">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-8 w-8 text-blue-500"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                        />
                       </svg>
                     </div>
-                    <span className="text-blue-400 font-medium">Click to upload images</span>
-                    <span className="text-gray-400 text-sm mt-2">PNG, JPG, WebP, GIF up to 10MB</span>
+                    <span className="text-blue-400 font-medium">
+                      Click to upload images
+                    </span>
+                    <span className="text-gray-400 text-sm mt-2">
+                      PNG, JPG, WebP, GIF up to 10MB
+                    </span>
                   </label>
                 </div>
                 {errors.images && (
@@ -411,8 +448,12 @@ export default function ProductUploadPage() {
                 {previewUrls.length > 0 && (
                   <div className="grid grid-cols-2 gap-4 mt-6">
                     {previewUrls.map((url, index) => (
-                      <div key={index} className="relative aspect-square rounded-lg overflow-hidden bg-gray-800">
-                        <img
+                      <div
+                        key={index}
+                        className="relative aspect-square rounded-lg overflow-hidden bg-gray-800"
+                      >
+                        <Image
+                          fill
                           src={url}
                           alt={`Preview ${index + 1}`}
                           className="w-full h-full object-cover"
@@ -426,10 +467,14 @@ export default function ProductUploadPage() {
 
             {/* Right Panel - Product Details */}
             <div className="md:w-1/2 p-8">
-              <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Details</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">
+                Product Details
+              </h2>
               <form onSubmit={onSubmit} className="space-y-6">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Product Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Product Name
+                  </label>
                   <input
                     type="text"
                     value={name}
@@ -439,11 +484,17 @@ export default function ProductUploadPage() {
                     } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                     placeholder="Enter product name"
                   />
-                  {errors.name && <span className="text-red-500 text-xs mt-1">{errors.name}</span>}
+                  {errors.name && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.name}
+                    </span>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Category
+                  </label>
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
@@ -451,18 +502,30 @@ export default function ProductUploadPage() {
                       errors.category ? "border-red-500" : "border-gray-300"
                     } focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all`}
                   >
-                    <option value="" disabled>Select a category</option>
-                    {categories.map(category => (
-                      <option key={category.id} value={category.id}>{category.name}</option>
+                    <option value="" disabled>
+                      Select a category
+                    </option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
                     ))}
                   </select>
-                  {errors.category && <span className="text-red-500 text-xs mt-1">{errors.category}</span>}
+                  {errors.category && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.category}
+                    </span>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Price</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Price
+                  </label>
                   <div className="relative">
-                    <span className="absolute left-4 top-3 text-gray-500">$</span>
+                    <span className="absolute left-4 top-3 text-gray-500">
+                      $
+                    </span>
                     <input
                       type="number"
                       step="0.01"
@@ -474,11 +537,17 @@ export default function ProductUploadPage() {
                       placeholder="0.00"
                     />
                   </div>
-                  {errors.price && <span className="text-red-500 text-xs mt-1">{errors.price}</span>}
+                  {errors.price && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.price}
+                    </span>
+                  )}
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description
+                  </label>
                   <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
@@ -488,7 +557,11 @@ export default function ProductUploadPage() {
                     placeholder="Enter product description"
                     rows={4}
                   />
-                  {errors.description && <span className="text-red-500 text-xs mt-1">{errors.description}</span>}
+                  {errors.description && (
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.description}
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex space-x-4">

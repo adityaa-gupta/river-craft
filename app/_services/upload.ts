@@ -14,36 +14,61 @@ export async function uploadImageToSupabase(
 ): Promise<{ url: string | null; error: Error | null }> {
   try {
     // Validate file type
-    if (file instanceof File && !file.type.match(/^image\/(jpeg|png|gif|webp)$/)) {
-      return { 
-        url: null, 
-        error: new Error(`Invalid file type for ${file.name || 'file'}. Supported: JPEG, PNG, GIF, WebP`) 
+    if (
+      file instanceof File &&
+      !file.type.match(/^image\/(jpeg|png|gif|webp)$/)
+    ) {
+      return {
+        url: null,
+        error: new Error(
+          `Invalid file type for ${
+            file.name || "file"
+          }. Supported: JPEG, PNG, GIF, WebP`
+        ),
       };
     }
 
     // Sanitize path
-    const sanitizedPath = path.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const sanitizedPath = path.replace(/[^a-zA-Z0-9._-]/g, "_");
 
     // Upload the file
-    const { error: uploadError } = await supabase.storage.from(bucket).upload(sanitizedPath, file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
+    const { error: uploadError } = await supabase.storage
+      .from(bucket)
+      .upload(sanitizedPath, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
 
     if (uploadError) {
-      return { url: null, error: new Error(`Upload failed for ${sanitizedPath}: ${uploadError.message}`) };
+      return {
+        url: null,
+        error: new Error(
+          `Upload failed for ${sanitizedPath}: ${uploadError.message}`
+        ),
+      };
     }
 
     // Get the public URL
-    const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(sanitizedPath);
+    const { data: urlData } = supabase.storage
+      .from(bucket)
+      .getPublicUrl(sanitizedPath);
     const publicUrl = urlData?.publicUrl;
 
     if (!publicUrl) {
-      return { url: null, error: new Error(`Failed to get public URL for ${sanitizedPath}`) };
+      return {
+        url: null,
+        error: new Error(`Failed to get public URL for ${sanitizedPath}`),
+      };
     }
 
     return { url: publicUrl, error: null };
-  } catch (err: any) {
-    return { url: null, error: new Error(`Unexpected error uploading to ${bucket} : ${err.message}`) };
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    return {
+      url: null,
+      error: new Error(
+        `Unexpected error uploading to ${bucket}: ${errorMessage}`
+      ),
+    };
   }
 }

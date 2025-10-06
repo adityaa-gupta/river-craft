@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getProductsPaginated } from "./../_services/product";
 import { Product } from "../_type/product";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 
 const categories = [
   { id: "mirror", name: "Mirror" },
@@ -13,36 +15,50 @@ const categories = [
   { id: "canvas", name: "Canvas" },
 ];
 
-export default function DiscoverPage() {
+export default function DiscoverPageContent() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [selectedCategory, setSelectedCategory] = useState<string>(searchParams.get("category") || "");
+
+  const [selectedCategory, setSelectedCategory] = useState<string>(
+    searchParams.get("category") || ""
+  );
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [hasMore, setHasMore] = useState<boolean>(true);
-  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [lastDoc, setLastDoc] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
 
-  const fetchProducts = async (isMore: boolean = false) => {
-    if (!isMore) setLoading(true);
-    try {
-      const { products: newProducts, lastDoc: newLastDoc } = await getProductsPaginated(selectedCategory, 15, isMore ? lastDoc : null);
-      console.log("PROD : ", newProducts)
-      setProducts(prev => isMore ? [...prev, ...newProducts] : newProducts);
-      setLastDoc(newLastDoc);
-      setHasMore(newProducts.length === 15);
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-    } finally {
-      if (!isMore) setLoading(false);
-    }
-  };
+  const fetchProducts = useCallback(
+    async (isMore: boolean = false) => {
+      if (!isMore) setLoading(true);
+      try {
+        const { products: newProducts, lastDoc: newLastDoc } =
+          await getProductsPaginated(
+            selectedCategory,
+            15,
+            isMore ? lastDoc : null
+          );
+        console.log("PROD : ", newProducts);
+        setProducts((prev) =>
+          isMore ? [...prev, ...newProducts] : newProducts
+        );
+        setLastDoc(newLastDoc);
+        setHasMore(newProducts.length === 15);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        if (!isMore) setLoading(false);
+      }
+    },
+    [selectedCategory, lastDoc]
+  );
 
   useEffect(() => {
     setProducts([]);
     setLastDoc(null);
     setHasMore(true);
-    // update the path params 
+    // update the path params
     const params = new URLSearchParams(searchParams.toString());
     if (selectedCategory) {
       params.set("category", selectedCategory);
@@ -52,7 +68,7 @@ export default function DiscoverPage() {
 
     router.replace(`${pathname}?${params.toString()}`);
     fetchProducts();
-  }, [selectedCategory]);
+  }, [selectedCategory, pathname, router, searchParams, fetchProducts]);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -129,10 +145,19 @@ export default function DiscoverPage() {
               dataLength={products.length}
               next={() => fetchProducts(true)}
               hasMore={hasMore}
-              loader={<p className="text-gray-500 text-center mt-8">Loading more...</p>}
-              endMessage={products.length > 0 && !hasMore && (
-                <p className="text-gray-500 text-center mt-8">No more products to load.</p>
-              )}
+              loader={
+                <p className="text-gray-500 text-center mt-8">
+                  Loading more...
+                </p>
+              }
+              endMessage={
+                products.length > 0 &&
+                !hasMore && (
+                  <p className="text-gray-500 text-center mt-8">
+                    No more products to load.
+                  </p>
+                )
+              }
             >
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {products.map((product) => (
@@ -144,7 +169,8 @@ export default function DiscoverPage() {
                       className="w-full relative overflow-hidden"
                       style={{ paddingBottom: "100%" }}
                     >
-                      <img
+                      <Image
+                        fill
                         src={product.imageUrls[0]}
                         alt={product.name}
                         className="object-cover absolute top-0 left-0 w-full h-full group-hover:scale-105 transition-transform duration-200"
