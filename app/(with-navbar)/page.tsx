@@ -68,7 +68,7 @@ export default function DiscoverPageContent() {
 
     router.replace(`${pathname}?${params.toString()}`);
     fetchProducts();
-  }, [selectedCategory, pathname, router, searchParams, fetchProducts]);
+  }, [selectedCategory, pathname, router, searchParams]);
 
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
