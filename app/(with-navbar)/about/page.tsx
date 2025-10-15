@@ -1,6 +1,4 @@
 "use client";
-
-import Image from "next/image";
 import Link from "next/link";
 import { Playfair_Display, Lato } from "next/font/google";
 

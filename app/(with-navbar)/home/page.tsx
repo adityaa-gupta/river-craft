@@ -44,30 +44,6 @@ const categories = [
   },
 ];
 
-const featuredItems = [
-  {
-    id: 1,
-    name: "Gold-Rimmed Mirror",
-    image: "mirror-1.jpg",
-    price: 149.99,
-    category: "mirror",
-  },
-  {
-    id: 2,
-    name: "Autumn Landscape",
-    image: "painting-1.jpg",
-    price: 199.99,
-    category: "painting",
-  },
-  {
-    id: 3,
-    name: "Custom Family Nameplate",
-    image: "nameplate-1.jpg",
-    price: 89.99,
-    category: "nameplate",
-  },
-];
-
 export default function HomePage() {
   return (
     <div
@@ -228,7 +204,9 @@ export default function HomePage() {
                   {/* Category Image */}
                   <div className="h-48 overflow-hidden relative">
                     <div className="h-full bg-amber-50 flex items-center justify-center transition-transform duration-500 group-hover:scale-110">
-                      <img
+                      <Image
+                        height={112}
+                        width={112}
                         src={category.image}
                         alt={category.name}
                         className="h-28 w-28 object-contain transition-transform duration-500 group-hover:scale-110"

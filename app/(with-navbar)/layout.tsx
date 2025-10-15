@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import { Suspense } from "react";
 // Import the Playfair Display font instead
-import { Give_You_Glory, Lato, Playfair_Display } from "next/font/google";
+import { Lato, Playfair_Display } from "next/font/google";
 
 // Initialize the font with multiple weights for flexibility
 const playfairDisplay = Playfair_Display({
@@ -14,12 +14,6 @@ const playfairDisplay = Playfair_Display({
   display: "swap",
   // Include multiple weights for different use cases
   weight: ["400", "500", "600", "700", "800", "900"],
-});
-
-const giveYouGlory = Give_You_Glory({
-  weight: "400",
-  subsets: ["latin"],
-  display: "swap",
 });
 
 const lato = Lato({
