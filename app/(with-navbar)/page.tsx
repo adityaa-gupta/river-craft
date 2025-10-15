@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { getProductsPaginated } from "./../_services/product";
+import { getProductsByPage } from "./../_services/product";
 import { Product } from "../_type/product";
-import InfiniteScroll from "react-infinite-scroll-component";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
-import { QueryDocumentSnapshot, DocumentData } from "firebase/firestore";
 import { Playfair_Display } from "next/font/google";
 
 // Initialize the font
@@ -33,38 +31,36 @@ export default function DiscoverPageContent() {
   );
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [hasMore, setHasMore] = useState<boolean>(true);
-  const [lastDoc, setLastDoc] =
-    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const ITEMS_PER_PAGE = 12;
 
   const fetchProducts = useCallback(
-    async (isMore: boolean = false) => {
-      if (!isMore) setLoading(true);
+    async (page: number = 1) => {
+      setLoading(true);
       try {
-        const { products: newProducts, lastDoc: newLastDoc } =
-          await getProductsPaginated(
-            selectedCategory,
-            15,
-            isMore ? lastDoc : null
-          );
-        setProducts((prev) =>
-          isMore ? [...prev, ...newProducts] : newProducts
+        const skip = (page - 1) * ITEMS_PER_PAGE;
+        const { products: newProducts, totalCount } = await getProductsByPage(
+          selectedCategory,
+          ITEMS_PER_PAGE,
+          skip
         );
-        setLastDoc(newLastDoc);
-        setHasMore(newProducts.length === 15);
+        setProducts(newProducts);
+        setCurrentPage(page);
+        setTotalPages(Math.ceil(totalCount / ITEMS_PER_PAGE));
       } catch (err) {
         console.error("Failed to fetch products:", err);
       } finally {
-        if (!isMore) setLoading(false);
+        setLoading(false);
       }
     },
-    [selectedCategory, lastDoc]
+    [selectedCategory]
   );
 
   useEffect(() => {
     setProducts([]);
-    setLastDoc(null);
-    setHasMore(true);
+    setCurrentPage(1);
+    setTotalPages(1);
     // update the path params
     const params = new URLSearchParams(searchParams.toString());
     if (selectedCategory) {
@@ -181,24 +177,8 @@ export default function DiscoverPageContent() {
             </p>
           </div>
         ) : (
-          <InfiniteScroll
-            dataLength={products.length}
-            next={() => fetchProducts(true)}
-            hasMore={hasMore}
-            loader={
-              <div className="flex justify-center items-center py-8">
-                <div className="w-8 h-8 border-t-2 border-[#DAA520] rounded-full animate-spin"></div>
-              </div>
-            }
-            endMessage={
-              products.length > 0 &&
-              !hasMore && (
-                <p className="text-gray-500 text-center mt-8 italic">
-                  You've seen all our creations
-                </p>
-              )
-            }
-          >
+          <div>
+            {/* Products Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8">
               {products.map((product) => (
                 <div
@@ -255,7 +235,106 @@ export default function DiscoverPageContent() {
                 </div>
               ))}
             </div>
-          </InfiniteScroll>
+
+            {/* Pagination Controls */}
+            <div className="mt-12 flex flex-col items-center justify-center space-y-4">
+              {/* Page Numbers */}
+              <div className="flex items-center space-x-2">
+                {/* Previous Page Button */}
+                <button
+                  onClick={() =>
+                    currentPage > 1 && fetchProducts(currentPage - 1)
+                  }
+                  disabled={currentPage === 1}
+                  className={`w-10 h-10 flex items-center justify-center rounded-md ${
+                    currentPage === 1
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15 19l-7-7 7-7"
+                    />
+                  </svg>
+                </button>
+
+                {/* Page Numbers */}
+                {Array.from({ length: totalPages }).map((_, i) => {
+                  if (
+                    i === 0 ||
+                    i === totalPages - 1 ||
+                    (i >= currentPage - 2 && i <= currentPage + 2)
+                  ) {
+                    return (
+                      <button
+                        key={i}
+                        onClick={() => fetchProducts(i + 1)}
+                        className={`w-10 h-10 flex items-center justify-center rounded-md ${
+                          currentPage === i + 1
+                            ? "bg-gradient-to-r from-[#8B0000] to-[#DAA520] text-white"
+                            : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                        }`}
+                      >
+                        {i + 1}
+                      </button>
+                    );
+                  } else if (i === 1 || i === totalPages - 2) {
+                    return (
+                      <span
+                        key={i}
+                        className="w-10 h-10 flex items-center justify-center text-gray-500"
+                      >
+                        …
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+
+                {/* Next Page Button */}
+                <button
+                  onClick={() =>
+                    currentPage < totalPages && fetchProducts(currentPage + 1)
+                  }
+                  disabled={currentPage === totalPages}
+                  className={`w-10 h-10 flex items-center justify-center rounded-md ${
+                    currentPage === totalPages
+                      ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                      : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  }`}
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <p className="text-sm text-gray-500">
+                Showing page {currentPage} of {totalPages}
+              </p>
+            </div>
+          </div>
         )}
       </div>
 
