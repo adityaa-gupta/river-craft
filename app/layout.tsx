@@ -1,8 +1,21 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Give_You_Glory } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+// Configure the Inter font (already in use)
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
+
+// Add the Give You Glory font
+const giveYouGlory = Give_You_Glory({
+  weight: "400", // Only available in 400 weight
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-give-you-glory",
+});
 
 export const metadata: Metadata = {
   title: "River Craft",
@@ -16,7 +29,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased`}>
+      <body
+        className={`${inter.variable} ${giveYouGlory.variable} antialiased`}
+      >
         {children}
       </body>
     </html>
