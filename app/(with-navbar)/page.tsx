@@ -183,55 +183,145 @@ export default function DiscoverPageContent() {
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="group relative bg-white rounded-md overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col h-full"
+                  className="group relative bg-white rounded-lg overflow-hidden flex flex-col h-full shadow-sm hover:shadow-lg transition-all duration-300"
                 >
-                  {/* Product Image */}
+                  {/* Product Image with hover effects */}
                   <div className="relative pb-[100%] overflow-hidden">
                     <Image
                       fill
                       src={product.imageUrls[0]}
                       alt={product.name}
-                      className="object-cover absolute top-0 left-0 w-full h-full group-hover:scale-110 transition-transform duration-500"
+                      className="object-cover absolute top-0 left-0 w-full h-full transition-all duration-700 group-hover:scale-110"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      // priority={product.featured}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </div>
 
-                  {/* Product Info */}
-                  <div className="p-4 flex-1 flex flex-col">
-                    <h3
-                      className={`text-lg font-medium text-gray-800 mb-1 ${playfairDisplay.className}`}
-                    >
-                      {product.name}
-                    </h3>
-                    <p className="mt-1 text-sm text-gray-500 line-clamp-2 flex-1">
-                      {product.description}
-                    </p>
-                    <div className="mt-3 flex items-center justify-between">
-                      <p
-                        className="text-lg font-semibold"
-                        style={{
-                          background:
-                            "linear-gradient(to right, #8B0000, #DAA520)",
-                          WebkitBackgroundClip: "text",
-                          WebkitTextFillColor: "transparent",
-                          backgroundClip: "text",
-                        }}
-                      >
-                        ${product.price.toFixed(2)}
-                      </p>
-                      <button className="text-sm px-3 py-1 border border-gray-300 rounded hover:border-amber-500 hover:text-amber-800 transition-colors">
-                        View Details
-                      </button>
+                    {/* Layered hover effect */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+
+                    {/* Quick actions on hover */}
+                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+                      <div className="flex justify-center space-x-2">
+                        <button
+                          className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-gray-800 hover:bg-[#DAA520] hover:text-white transition-colors"
+                          aria-label="Quick view"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                            <path
+                              fillRule="evenodd"
+                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                        <button
+                          className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-gray-800 hover:bg-[#8B0000] hover:text-white transition-colors"
+                          aria-label="Add to favorites"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
                   {/* Category Badge */}
-                  <div className="absolute top-3 right-3">
-                    <span className="bg-white/80 backdrop-blur-sm text-xs px-2 py-1 rounded-full text-gray-700">
+                  <div className="absolute top-3 right-3 z-10">
+                    <span className="bg-white/80 backdrop-blur-sm text-xs px-3 py-1.5 rounded-full text-gray-700 font-medium shadow-sm">
                       {categories.find((c) => c.id === product.category)
                         ?.name || product.category}
                     </span>
                   </div>
+
+                  {/* Product Info with modern styling */}
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3
+                      className={`text-lg font-medium mb-2 group-hover:text-transparent bg-clip-text bg-gradient-to-r from-[#8B0000] to-[#DAA520] transition-all duration-300 ${playfairDisplay.className}`}
+                    >
+                      {product.name}
+                    </h3>
+
+                    <p className="text-sm text-gray-500 line-clamp-2 flex-1 mb-3">
+                      {product.description}
+                    </p>
+
+                    <div className="flex items-center justify-between mt-auto">
+                      <div className="flex flex-col">
+                        <span className="text-xs text-gray-400 uppercase">
+                          Price
+                        </span>
+                        <p
+                          className="text-lg font-semibold"
+                          style={{
+                            background:
+                              "linear-gradient(to right, #8B0000, #DAA520)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                            backgroundClip: "text",
+                          }}
+                        >
+                          ${product.price.toFixed(2)}
+                        </p>
+                      </div>
+
+                      {/* Modern Button */}
+                      <button
+                        className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm font-medium 
+                                  group-hover:bg-gradient-to-r group-hover:from-[#8B0000] group-hover:to-[#DAA520] 
+                                  group-hover:text-white group-hover:border-transparent transition-all duration-300"
+                      >
+                        View Details
+                      </button>
+                    </div>
+
+                    {/* Rating Stars (if available) */}
+                    {/* {product.rating && ( */}
+                    <div className="flex items-center mt-2">
+                      {[...Array(5)].map((_, i) => (
+                        <svg
+                          key={i}
+                          className={`w-3.5 h-3.5 ${
+                            i < 2 ? "text-amber-400" : "text-gray-300"
+                          }`}
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                      ))}
+                      <span className="text-xs text-gray-500 ml-1">
+                        ({4.2})
+                      </span>
+                    </div>
+                    {/* )} */}
+                  </div>
+
+                  {/* Subtle border gradient on hover */}
+                  <div
+                    className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+                    style={{
+                      background: "linear-gradient(to right, #8B0000, #DAA520)",
+                      padding: "1px",
+                      mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                      maskComposite: "exclude",
+                    }}
+                  ></div>
                 </div>
               ))}
             </div>
