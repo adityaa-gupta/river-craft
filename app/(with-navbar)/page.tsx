@@ -36,42 +36,43 @@ export default function DiscoverPageContent() {
   const ITEMS_PER_PAGE = 12;
 
   const fetchProducts = useCallback(
-    async (page: number = 1) => {
-      setLoading(true);
-      try {
-        const skip = (page - 1) * ITEMS_PER_PAGE;
-        const { products: newProducts, totalCount } = await getProductsByPage(
-          selectedCategory,
-          ITEMS_PER_PAGE,
-          skip
-        );
-        setProducts(newProducts);
-        setCurrentPage(page);
-        setTotalPages(Math.ceil(totalCount / ITEMS_PER_PAGE));
-      } catch (err) {
-        console.error("Failed to fetch products:", err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [selectedCategory]
-  );
+  async (page: number = 1) => {
+    setLoading(true);
+    try {
+      const skip = (page - 1) * ITEMS_PER_PAGE;
+      const { products: newProducts, totalCount } = await getProductsByPage(
+        selectedCategory,
+        ITEMS_PER_PAGE,
+        skip
+      );
+      setProducts(newProducts);
+      setCurrentPage(page);
+      setTotalPages(Math.ceil(totalCount / ITEMS_PER_PAGE));
+    } catch (err) {
+      console.error("Failed to fetch products:", err);
+    } finally {
+      setLoading(false);
+    }
+  },
+  [selectedCategory] // ✅ this ensures fetchProducts only changes when category changes
+);
 
   useEffect(() => {
-    setProducts([]);
-    setCurrentPage(1);
-    setTotalPages(1);
-    // update the path params
-    const params = new URLSearchParams(searchParams.toString());
-    if (selectedCategory) {
-      params.set("category", selectedCategory);
-    } else {
-      params.delete("filter");
-    }
+  setProducts([]);
+  setCurrentPage(1);
+  setTotalPages(1);
 
-    router.replace(`${pathname}?${params.toString()}`);
-    fetchProducts();
-  }, [selectedCategory, pathname, router, searchParams]);
+  const params = new URLSearchParams(searchParams.toString());
+  if (selectedCategory) {
+    params.set("category", selectedCategory);
+  } else {
+    params.delete("filter");
+  }
+
+  router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  fetchProducts(); // safe
+}, [selectedCategory, pathname, router, searchParams, fetchProducts]);
+
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId === selectedCategory ? "" : categoryId);
@@ -173,7 +174,7 @@ export default function DiscoverPageContent() {
               No products found
             </h3>
             <p className="text-gray-500">
-              We couldn't find any products in this category.
+              We couldn&apos;t find any products in this category.
             </p>
           </div>
         ) : (
@@ -199,46 +200,6 @@ export default function DiscoverPageContent() {
                     {/* Layered hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
-                    {/* Quick actions on hover */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <div className="flex justify-center space-x-2">
-                        <button
-                          className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-gray-800 hover:bg-[#DAA520] hover:text-white transition-colors"
-                          aria-label="Quick view"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                            <path
-                              fillRule="evenodd"
-                              d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                        <button
-                          className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center text-gray-800 hover:bg-[#8B0000] hover:text-white transition-colors"
-                          aria-label="Add to favorites"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-5 w-5"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
                   </div>
 
                   {/* Category Badge */}
@@ -276,40 +237,12 @@ export default function DiscoverPageContent() {
                             backgroundClip: "text",
                           }}
                         >
-                          ${product.price.toFixed(2)}
+                          ₹{product.price.toFixed(2)}
                         </p>
                       </div>
 
-                      {/* Modern Button */}
-                      <button
-                        className="px-4 py-2 bg-white border border-gray-200 rounded-md text-sm font-medium 
-                                  group-hover:bg-gradient-to-r group-hover:from-[#8B0000] group-hover:to-[#DAA520] 
-                                  group-hover:text-white group-hover:border-transparent transition-all duration-300"
-                      >
-                        View Details
-                      </button>
                     </div>
 
-                    {/* Rating Stars (if available) */}
-                    {/* {product.rating && ( */}
-                    <div className="flex items-center mt-2">
-                      {[...Array(5)].map((_, i) => (
-                        <svg
-                          key={i}
-                          className={`w-3.5 h-3.5 ${
-                            i < 2 ? "text-amber-400" : "text-gray-300"
-                          }`}
-                          fill="currentColor"
-                          viewBox="0 0 20 20"
-                        >
-                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                        </svg>
-                      ))}
-                      <span className="text-xs text-gray-500 ml-1">
-                        ({4.2})
-                      </span>
-                    </div>
-                    {/* )} */}
                   </div>
 
                   {/* Subtle border gradient on hover */}
@@ -428,37 +361,6 @@ export default function DiscoverPageContent() {
         )}
       </div>
 
-      {/* Newsletter Section */}
-      <div className="bg-white py-12 mt-16">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-          <h2
-            className={`text-2xl md:text-3xl text-gray-900 mb-4 ${playfairDisplay.className}`}
-            style={{
-              background: "linear-gradient(to right, #8B0000, #DAA520)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Stay Updated with New Creations
-          </h2>
-          <p className="text-gray-600 mb-8 max-w-xl mx-auto">
-            Subscribe to our newsletter and be the first to see our latest
-            handcrafted pieces.
-          </p>
-
-          <div className="flex max-w-md mx-auto flex-col sm:flex-row gap-2">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="flex-1 px-4 py-3 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500"
-            />
-            <button className="px-6 py-3 rounded-md bg-gradient-to-r from-[#8B0000] to-[#DAA520] text-white font-medium shadow-sm hover:shadow-md transition-shadow">
-              Subscribe
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }

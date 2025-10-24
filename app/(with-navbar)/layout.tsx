@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Suspense } from "react";
 // Import the Playfair Display font instead
 import { Lato, Playfair_Display } from "next/font/google";
+import { NextFont } from "next/dist/compiled/@next/font";
 
 // Initialize the font with multiple weights for flexibility
 const playfairDisplay = Playfair_Display({
@@ -123,16 +124,16 @@ export default function NavbarLayout({
               </div>
 
               {/* Contact Us button */}
-              <Link
-                href="/contact"
-                className="ml-3 px-4 py-1.5 rounded-md text-white text-sm font-medium transition-all duration-300 shadow hover:shadow-md"
+              <a
+                href="/about#contact-section"
+                className="ml-3 px-4 py-1.5 mr-8 rounded-md text-white text-sm font-medium transition-all duration-300 shadow hover:shadow-md"
                 style={{
                   background: "linear-gradient(to right, #8B0000, #DAA520)",
                   textShadow: "0px 1px 1px rgba(0,0,0,0.1)",
                 }}
               >
                 Contact Us
-              </Link>
+              </a>
             </div>
 
             {/* Mobile menu button */}
@@ -225,7 +226,7 @@ export default function NavbarLayout({
             {/* Add a contact button to mobile menu */}
             <div className="px-4 py-3 border-t border-gray-100">
               <Link
-                href="/contact"
+                href="/about#contact-section"
                 className="block w-full py-2 px-4 rounded text-center transition-all duration-300"
                 style={{
                   background: "linear-gradient(to right, #8B0000, #DAA520)",
@@ -248,7 +249,7 @@ export default function NavbarLayout({
   );
 }
 
-function Footer({ playfairDisplay }: { playfairDisplay: any }) {
+function Footer({ playfairDisplay }: { playfairDisplay: NextFont }) {
   const year = new Date().getFullYear();
 
   return (

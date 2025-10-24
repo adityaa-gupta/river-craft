@@ -21,25 +21,25 @@ const categories = [
   {
     id: "mirror",
     name: "Mirrors",
-    image: "hand-mirror.png",
+    image: "/hand-mirror.png",
     description: "Elegant reflections for your space",
   },
   {
     id: "painting",
     name: "Paintings",
-    image: "paint.png",
+    image: "/paint.png",
     description: "Handcrafted visual expressions",
   },
   {
     id: "nameplate",
     name: "Nameplates",
-    image: "signboard.png",
+    image: "/signboard.png",
     description: "Custom identity for your home",
   },
   {
     id: "canvas",
     name: "Canvases",
-    image: "canvas.png",
+    image: "/canvas.png",
     description: "Artistic storytelling on fabric",
   },
 ];
@@ -138,9 +138,8 @@ export default function HomePage() {
                 src="/hero.jpg"
                 alt="Handcrafted Art"
                 fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
+                className="w-full h-full object-cover" // ✅ fills container
+                // sizes="(max-width: 768px) 100vw, 50vw"
               />
               {/* Gradient border overlay */}
               <div
@@ -171,7 +170,7 @@ export default function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12 space-y-4">
             <h2
-              className={`${playfairDisplay.className} text-3xl md:text-4xl lg:text-5xl font-bold`}
+              className={`${playfairDisplay.className} text-5xl md:text-4xl lg:text-5xl font-bold pb-2`}
               style={{
                 background: "linear-gradient(to right, #8B0000, #DAA520)",
                 WebkitBackgroundClip: "text",
@@ -310,10 +309,10 @@ export default function HomePage() {
                 </div>
               </div>
               <blockquote className="text-gray-700 mb-6 italic">
-                "I ordered a custom nameplate for our new home, and it exceeded
+                &quot;I ordered a custom nameplate for our new home, and it exceeded
                 all expectations. The attention to detail and craftsmanship is
-                outstanding. It's now the first thing visitors compliment when
-                they come over!"
+                outstanding. It&apos;s now the first thing visitors compliment when
+                they come over!&quot;
               </blockquote>
               <div className="flex items-center">
                 <div className="ml-4">
@@ -345,9 +344,9 @@ export default function HomePage() {
                 </div>
               </div>
               <blockquote className="text-gray-700 mb-6 italic">
-                "The hand-painted mirror I purchased is truly a work of art.
+                &quot;The hand-painted mirror I purchased is truly a work of art.
                 Every time I look at it, I discover new details to appreciate.
-                It's become the centerpiece of my living room."
+                It&apos;s become the centerpiece of my living room.&quot;
               </blockquote>
               <div className="flex items-center">
                 <div className="ml-4">
@@ -379,10 +378,10 @@ export default function HomePage() {
                 </div>
               </div>
               <blockquote className="text-gray-700 mb-6 italic">
-                "I commissioned a canvas painting for my mother's birthday. The
+                &quot;I commissioned a canvas painting for my mother&apos;s birthday. The
                 artist captured exactly what I wanted, and the communication
                 throughout the process was excellent. My mother was moved to
-                tears!"
+                tears!&quot;
               </blockquote>
               <div className="flex items-center">
                 <div className="ml-4">
@@ -393,39 +392,6 @@ export default function HomePage() {
                   </p>
                   <p className="text-sm text-gray-500">Bangalore</p>
                 </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-[#8B0000] to-[#DAA520] rounded-xl overflow-hidden shadow-xl">
-            <div className="px-8 py-16 md:py-20 md:px-12 lg:px-16 text-center">
-              <h2
-                className={`${playfairDisplay.className} text-3xl md:text-4xl font-bold text-white mb-6`}
-              >
-                Ready to Add Elegance to Your Space?
-              </h2>
-              <p className="text-white/90 text-lg max-w-2xl mx-auto mb-8">
-                Discover our collection of handcrafted treasures or request a
-                custom piece designed just for you.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/"
-                  className="py-3 px-8 bg-white text-gray-900 rounded-md font-medium hover:bg-gray-100 transition-colors shadow-md"
-                >
-                  Browse Collection
-                </Link>
-                <Link
-                  href="/contact"
-                  className="py-3 px-8 bg-transparent text-white border border-white/80 rounded-md font-medium hover:bg-white/10 transition-colors"
-                >
-                  Request Custom Order
-                </Link>
               </div>
             </div>
           </div>

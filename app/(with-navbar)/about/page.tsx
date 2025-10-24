@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { Playfair_Display, Lato } from "next/font/google";
+import Image from "next/image";
 
 // Initialize fonts
 const playfairDisplay = Playfair_Display({
@@ -80,10 +81,13 @@ export default function AboutPage() {
             {/* Image Side */}
             <div className="relative order-2 lg:order-1">
               <div className="aspect-[4/5] relative rounded-lg overflow-hidden shadow-xl">
-                <img
-                  src="hero.jpg"
+                <Image
+                  src="/hero.jpg"
                   alt="Handcrafted Mirror"
-                  className="object-cover w-full h-full"
+                  fill
+                  className="object-cover"
+                  quality={100}
+                  priority
                 />
                 {/* Gradient border overlay */}
                 <div
@@ -219,7 +223,7 @@ export default function AboutPage() {
           <div className="absolute bottom-20 left-10 w-60 h-60 bg-[#DAA520]/5 rounded-full blur-3xl" />
         </div>
 
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-4xl mx-auto" id="contact-section">
           <div className="text-center space-y-6 mb-12">
             <h2
               className={`${playfairDisplay.className} text-3xl md:text-4xl font-bold text-balance`}
@@ -254,9 +258,11 @@ export default function AboutPage() {
               >
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <img
-                      src="instagram.png"
+                    <Image
+                      src="/instagram.png"
                       alt="Instagram"
+                      width={56} // pixel size
+                      height={56}
                       className="w-14 h-14"
                     />
                   </div>
@@ -288,7 +294,7 @@ export default function AboutPage() {
             </Link>
 
             <Link
-              href="https://wa.me/9602220735"
+              href="https://wa.me/9929285047"
               target="_blank"
               rel="noopener noreferrer"
               className="group"
@@ -299,9 +305,11 @@ export default function AboutPage() {
               >
                 <div className="flex flex-col items-center text-center space-y-4">
                   <div className="w-16 h-16 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <img
-                      src="whatsapp.png"
+                    <Image
+                      src="/whatsapp.png"
                       alt="WhatsApp"
+                      width={56}
+                      height={56}
                       className="w-14 h-14"
                     />
                   </div>
@@ -343,9 +351,11 @@ export default function AboutPage() {
                     background: "linear-gradient(to right, #8B0000, #DAA520)",
                   }}
                 >
-                  <img
-                    src="mail.png"
+                  <Image
+                    src="/mail.png"
                     alt="Mail"
+                    width={24}
+                    height={24}
                     className="w-6 h-6 brightness-0 invert"
                   />
                 </div>
@@ -356,7 +366,7 @@ export default function AboutPage() {
                     Email Us
                   </h4>
                   <p className={`${lato.className} text-sm text-gray-600`}>
-                    hello@sonojarts.com
+                    sonoj.arts@gmail.com
                   </p>
                 </div>
               </div>
@@ -368,9 +378,11 @@ export default function AboutPage() {
                     background: "linear-gradient(to right, #DAA520, #8B0000)",
                   }}
                 >
-                  <img
-                    src="phone.png"
+                  <Image
+                    src="/whatsapp.png"
                     alt="Phone"
+                    width={24}
+                    height={24}
                     className="w-6 h-6 brightness-0 invert"
                   />
                 </div>
