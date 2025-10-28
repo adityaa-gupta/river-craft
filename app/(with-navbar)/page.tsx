@@ -36,43 +36,42 @@ export default function DiscoverPageContent() {
   const ITEMS_PER_PAGE = 12;
 
   const fetchProducts = useCallback(
-  async (page: number = 1) => {
-    setLoading(true);
-    try {
-      const skip = (page - 1) * ITEMS_PER_PAGE;
-      const { products: newProducts, totalCount } = await getProductsByPage(
-        selectedCategory,
-        ITEMS_PER_PAGE,
-        skip
-      );
-      setProducts(newProducts);
-      setCurrentPage(page);
-      setTotalPages(Math.ceil(totalCount / ITEMS_PER_PAGE));
-    } catch (err) {
-      console.error("Failed to fetch products:", err);
-    } finally {
-      setLoading(false);
-    }
-  },
-  [selectedCategory] // ✅ this ensures fetchProducts only changes when category changes
-);
+    async (page: number = 1) => {
+      setLoading(true);
+      try {
+        const skip = (page - 1) * ITEMS_PER_PAGE;
+        const { products: newProducts, totalCount } = await getProductsByPage(
+          selectedCategory,
+          ITEMS_PER_PAGE,
+          skip
+        );
+        setProducts(newProducts);
+        setCurrentPage(page);
+        setTotalPages(Math.ceil(totalCount / ITEMS_PER_PAGE));
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [selectedCategory] // ✅ this ensures fetchProducts only changes when category changes
+  );
 
   useEffect(() => {
-  setProducts([]);
-  setCurrentPage(1);
-  setTotalPages(1);
+    setProducts([]);
+    setCurrentPage(1);
+    setTotalPages(1);
 
-  const params = new URLSearchParams(searchParams.toString());
-  if (selectedCategory) {
-    params.set("category", selectedCategory);
-  } else {
-    params.delete("filter");
-  }
+    const params = new URLSearchParams(searchParams.toString());
+    if (selectedCategory) {
+      params.set("category", selectedCategory);
+    } else {
+      params.delete("category");
+    }
 
-  router.replace(`${pathname}?${params.toString()}`, { scroll: false });
-  fetchProducts(); // safe
-}, [selectedCategory, pathname, router, searchParams, fetchProducts]);
-
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+    fetchProducts(); // safe
+  }, [selectedCategory, pathname, router, searchParams, fetchProducts]);
 
   const handleCategoryChange = (categoryId: string) => {
     setSelectedCategory(categoryId === selectedCategory ? "" : categoryId);
@@ -199,7 +198,6 @@ export default function DiscoverPageContent() {
 
                     {/* Layered hover effect */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
                   </div>
 
                   {/* Category Badge */}
@@ -240,9 +238,7 @@ export default function DiscoverPageContent() {
                           ₹{product.price.toFixed(2)}
                         </p>
                       </div>
-
                     </div>
-
                   </div>
 
                   {/* Subtle border gradient on hover */}
@@ -360,7 +356,6 @@ export default function DiscoverPageContent() {
           </div>
         )}
       </div>
-
     </div>
   );
 }
