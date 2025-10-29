@@ -18,8 +18,44 @@ const giveYouGlory = Give_You_Glory({
 });
 
 export const metadata: Metadata = {
-  title: "River Craft",
-  description: "Discover unique handcrafted items",
+  title: "Sonoj Arts - Handcrafted Art & Craft Items",
+  description:
+    "Explore Sonoj Arts' exclusive collection of handmade mirrors, paintings, nameplates, and canvases. Each piece is a unique work of art, crafted with love and precision to bring elegance to your space.",
+  keywords: [
+    "handcrafted art",
+    "handmade craft items",
+    "artisanal mirrors",
+    "custom nameplates",
+    "unique paintings",
+    "handmade canvases",
+    "home decor",
+    "handicraft items",
+    "art and craft for home",
+    "Sonoj Arts",
+  ],
+  openGraph: {
+    title: "Sonoj Arts - Handcrafted Art & Craft Items",
+    description:
+      "Explore Sonoj Arts' exclusive collection of handmade mirrors, paintings, nameplates, and canvases. Each piece is a unique work of art, crafted with love and precision to bring elegance to your space.",
+    url: "https://www.sonoj-art-and-craft.com/",
+    siteName: "Sonoj Arts",
+    images: [
+      {
+        url: "/hero.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Sonoj Arts - Handcrafted Art & Craft Items",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Sonoj Arts - Handcrafted Art & Craft Items",
+    description:
+      "Discover the beauty of handcrafted art and craft items at Sonoj Arts. Explore unique handmade mirrors, paintings, nameplates, and canvases, each crafted with passion and precision.",
+    images: ["/hero.jpg"],
+  },
 };
 
 export default function RootLayout({
