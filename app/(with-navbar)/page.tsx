@@ -19,6 +19,7 @@ const categories = [
   { id: "painting", name: "Painting" },
   { id: "nameplate", name: "Nameplate" },
   { id: "canvas", name: "Canvas" },
+  { id: "others", name: "Others"}
 ];
 
 export default function DiscoverPageContent() {
